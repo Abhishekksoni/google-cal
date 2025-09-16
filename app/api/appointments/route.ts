@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../lib/auth';
@@ -51,7 +53,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { sellerId, title, description, startTime, endTime } = body;
 
-    // Get seller and buyer details
+    if (!startTime || !endTime) {
+      return NextResponse.json(
+        { error: 'Missing startTime or endTime' },
+        { status: 400 }
+      );
+    }
+
     const seller = await prisma.user.findUnique({
       where: { id: sellerId },
     });
@@ -67,7 +75,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create calendar event
     const { eventId, meetingLink } = await createCalendarEvent(
       sellerId,
       {
@@ -80,7 +87,6 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    // Create appointment in database
     const appointment = await prisma.appointment.create({
       data: {
         title,
