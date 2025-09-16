@@ -13,8 +13,8 @@ export default function SellerDashboard() {
     setIsSettingUpSeller(true)
     try {
       // Sign in with Google with calendar scopes
-      await signIn('google', { 
-        callbackUrl: '/seller?setup=true'
+      await signIn('google', {
+        callbackUrl: `${window.location.origin}/seller?setup=true`
       })
     } catch (error) {
       console.error('Error during seller setup:', error)
@@ -22,21 +22,21 @@ export default function SellerDashboard() {
     }
   }
 
-const setupSellerRole = async () => {
-  try {
-    const response = await fetch('/api/seller/role', {
-      method: 'POST',
-    })
-    
-    if (response.ok) {
-      const url = new URL(window.location.href)
-      url.searchParams.delete('setup')
-      window.location.href = url.toString()
+  const setupSellerRole = async () => {
+    try {
+      const response = await fetch('/api/seller/role', {
+        method: 'POST',
+      })
+
+      if (response.ok) {
+        const url = new URL(window.location.href)
+        url.searchParams.delete('setup')
+        window.location.href = url.toString()
+      }
+    } catch (error) {
+      console.error('Error setting up seller role:', error)
     }
-  } catch (error) {
-    console.error('Error setting up seller role:', error)
   }
-}
 
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const setupSellerRole = async () => {
                   Sign in with Google to access your seller dashboard and manage your calendar availability
                 </p>
               </div>
-              
+
               <button
                 onClick={handleBecomeSellerAuth}
                 disabled={isSettingUpSeller}
@@ -77,7 +77,7 @@ const setupSellerRole = async () => {
               >
                 {isSettingUpSeller ? 'Setting up...' : 'Sign in with Google'}
               </button>
-              
+
               <Link href="/" className="btn-secondary w-full">
                 Back to Home
               </Link>
@@ -127,7 +127,7 @@ const setupSellerRole = async () => {
                 Calendar Integration
               </h2>
             </div>
-            
+
             {session.user.role === 'seller' ? (
               <div>
                 <div className="flex items-center space-x-2 mb-4">
@@ -186,7 +186,7 @@ const setupSellerRole = async () => {
                   See all your scheduled appointments
                 </p>
               </Link>
-              
+
               <a
                 href="https://calendar.google.com"
                 target="_blank"
